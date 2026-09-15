@@ -66,3 +66,14 @@ successive native samples, showing it only when both samples and the full state
 total are valid. This measures controller state across the whole Mac, **not ANE
 neural-compute utilization**. A Running controller can be waiting or handling
 firmware work, and macOS supplies no arbitrary-PID inference duration here.
+
+The `PMP` / `AF BW` and `PMP` / `DCS BW` channels named `ANE0 RD` and `ANE0 WR`
+were separately subscribable as a normal user. Each supplied tier labels such
+as `1GB/s` through `32GB/s` and cumulative counts with the unit `events`. Across
+idle intervals, no new events appeared. During a second sustained 2,000-request
+Vision workload, fabric read and DCS read histograms each added roughly 5,290
+events in their sampled intervals; separate fabric write and DCS write intervals
+also added roughly 5,300 events. This shows ANE-labeled bandwidth-monitor
+activity, but the counters do **not** state bytes moved or provide a calibrated
+data-transfer rate. The library preserves the tier-event deltas and the app
+displays their event rate, leaving actual GB/s unavailable.

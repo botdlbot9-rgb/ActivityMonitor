@@ -85,6 +85,16 @@ undocumented and can disappear or change. Missing channels, unreadable samples,
 counter resets, and zero interval totals appear as **—**. Process diagnostics
 show system measurements only as context beside direct-path connections.
 
+The reusable [ANETelemetry library](ANETelemetry.md) also reads optional `PMP`
+`AF BW` and `DCS BW` histograms for `ANE0 RD` and `ANE0 WR`. Their labeled
+`GB/s` tiers contain cumulative **monitor event counts**. Differences yield
+events by tier and events per elapsed second. These are system-wide activity
+samples, **not bytes transferred or measured bandwidth in GB/s**; the tier
+labels do not turn event counts into a data-transfer counter. At idle a valid
+zero-event delta reports zero, while missing channels, malformed tiers, changed
+units, or reset counters remain unavailable. The app shows fabric read/write
+event rates and leaves the raw histogram available to library clients.
+
 These registry keys and class names are driver-defined observations, not a
 documented cross-generation telemetry contract. The collector uses public,
 read-only IOKit APIs without administrator privileges. Apple provides detailed

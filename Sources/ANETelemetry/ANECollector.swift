@@ -2,16 +2,25 @@ import Foundation
 import IOKit
 
 /// These are open direct-path driver connections, not ANE execution or utilization.
-struct ANEHardwareSnapshot: Equatable {
-  var available: Bool
-  var engineCount: Int?
-  var coreCount: Int?
-  var connections: [Int32: Int]
-  var connectionsReadable = false
-  var estimatedPowerWatts: Double?
-  var controllerRunningPercent: Double?
-  var connectionCount: Int? { connectionsReadable ? connections.values.reduce(0, +) : nil }
-  var processCount: Int? { connectionsReadable ? connections.count : nil }
+public struct ANEHardwareSnapshot: Equatable {
+  public var available: Bool
+  public var engineCount: Int?
+  public var coreCount: Int?
+  public var connections: [Int32: Int]
+  public var connectionsReadable = false
+  public var estimatedPowerWatts: Double?
+  public var controllerRunningPercent: Double?
+  public var bandwidth = ANEBandwidthSnapshot()
+  public var connectionCount: Int? {
+    connectionsReadable ? connections.values.reduce(0, +) : nil
+  }
+  public var processCount: Int? { connectionsReadable ? connections.count : nil }
+  public init(available: Bool, engineCount: Int?, coreCount: Int?, connections: [Int32: Int]) {
+    self.available = available
+    self.engineCount = engineCount
+    self.coreCount = coreCount
+    self.connections = connections
+  }
 }
 
 enum ANERegistryParser {

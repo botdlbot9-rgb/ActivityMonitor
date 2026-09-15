@@ -1,5 +1,6 @@
 import Foundation
 import XCTest
+@testable import ANETelemetry
 @testable import ActivityMonitor
 
 final class ANECollectorTests: XCTestCase {
@@ -108,6 +109,40 @@ final class ANECollectorTests: XCTestCase {
     Thread.sleep(forTimeInterval: 0.15)
     if let percent = reader.read() {
       XCTAssertTrue((0...100).contains(percent))
+    }
+  }
+  func testBandwidthTierEventsAreRatesRatherThanInferredBytes() {
+    let baseline: [Int: Int64] = [1: 100, 2: 20]
+    let result = ANEBandwidthRate.histogram(
+      previous: baseline, current: [1: 200, 2: 40], seconds: 2)
+    XCTAssertEqual(result?.totalEvents, 120)
+    XCTAssertEqual(result?.eventsPerSecond, 60)
+    XCTAssertEqual(result?.eventsByTierGBps, [1: 100, 2: 20])
+    let idle = ANEBandwidthRate.histogram(
+      previous: baseline, current: baseline, seconds: 1)
+    XCTAssertEqual(idle?.totalEvents, 0)
+    XCTAssertEqual(idle?.eventsPerSecond, 0)
+    XCTAssertNil(ANEBandwidthRate.histogram(
+      previous: baseline, current: [1: 50, 2: 40], seconds: 1))
+    XCTAssertNil(ANEBandwidthRate.histogram(
+      previous: baseline, current: [1: 200], seconds: 1))
+    XCTAssertNil(ANEBandwidthRate.histogram(
+      previous: baseline, current: [1: 200, 2: 40], seconds: 0))
+  }
+  func testLiveBandwidthChannelsStayOptionalAndKeepTierCountsBounded() {
+    let reader = ANEBandwidthReader()
+    let first = reader.read()
+    XCTAssertNil(first.fabricRead) // The first native sample is a baseline.
+    Thread.sleep(forTimeInterval: 0.15)
+    let second = reader.read()
+    for histogram in [
+      second.fabricRead, second.fabricWrite, second.dcsRead, second.dcsWrite,
+    ].compactMap({ $0 }) {
+      XCTAssertGreaterThanOrEqual(histogram.eventsPerSecond, 0)
+      XCTAssertTrue(histogram.eventsByTierGBps.keys.allSatisfy { (1...128).contains($0) })
+      XCTAssertTrue(histogram.eventsByTierGBps.values.allSatisfy { $0 >= 0 })
+      XCTAssertEqual(histogram.totalEvents,
+        histogram.eventsByTierGBps.values.reduce(0, +))
     }
   }
 }
