@@ -78,7 +78,8 @@ struct ContentView: View {
   var subheading: String {
     switch metric {
     case .gpu: return "Graphics and compute, across your Mac."
-    case .ane: return "System power, controller state, bandwidth samples, and direct-path connections."
+    case .ane:
+      return "System power, controller state, bandwidth samples, and direct-path connections."
     case .cpu: return "A little clarity. A lot of processing power."
     case .memory: return "Understand how your Mac makes room for everything."
     case .energy: return "A closer look at the apps powering your day."
@@ -284,6 +285,7 @@ struct ContentView: View {
     if MonitorToolbarLayout(width: layout.width).showsBrand {
       ToolbarItem(placement: .navigation) {
         BrandMark(size: 24)
+          .frame(height: MonitorTitlebarGeometry.slotHeight, alignment: .center)
           .help("Activity Monitor · \(Self.machineName) · \(architectureLabel)")
           .accessibilityLabel("Activity Monitor, \(Self.machineName), \(architectureLabel)")
       }
@@ -337,13 +339,15 @@ struct ContentView: View {
           settingsMenu
         } label: {
           Image(systemName: "ellipsis").font(.system(size: 14))
-            .foregroundStyle(theme.secondary).frame(width: 32, height: 32)
+            .foregroundStyle(theme.secondary)
+            .frame(width: 32, height: MonitorTitlebarGeometry.surfaceHeight)
         }
         .menuStyle(.borderlessButton).menuIndicator(.hidden)
         .help("More").accessibilityLabel("More")
         .accessibilityIdentifier("monitor-settings")
       }
-      .frame(height: 34).fixedSize()
+      .frame(height: MonitorTitlebarGeometry.slotHeight, alignment: .center)
+      .fixedSize()
       .accessibilityElement(children: .contain)
     }
   }
@@ -353,7 +357,7 @@ struct ContentView: View {
     } label: {
       Image(systemName: icon).font(.system(size: 13))
         .foregroundStyle(appearance == name ? theme.blue : theme.tertiary)
-        .frame(width: 28, height: 26)
+        .frame(width: 28, height: MonitorTitlebarGeometry.surfaceHeight - 6)
     }
     .buttonStyle(MonitorSegmentButton(theme: theme, active: appearance == name, radius: 6))
     .help("\(name) appearance").accessibilityLabel("\(name) appearance")

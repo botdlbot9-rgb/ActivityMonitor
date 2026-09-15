@@ -1,6 +1,13 @@
 import AppKit
 import SwiftUI
 
+/// Match the native toolbar controls' visual height while leaving even space above and below.
+enum MonitorTitlebarGeometry {
+  static let slotHeight: CGFloat = 40
+  static let surfaceHeight: CGFloat = 32
+  static let metricButtonHeight: CGFloat = surfaceHeight - 8
+}
+
 /// Keep the familiar tab appearance while fitting the compact native title bar.
 struct ToolbarMetricPicker: View {
   @Binding var metric: Metric
@@ -8,11 +15,15 @@ struct ToolbarMetricPicker: View {
   var compact = false
 
   var body: some View {
-    MetricSwitcher(metric: $metric, theme: theme, compact: compact, controlHeight: 26)
-      .frame(width: compact ? 210 : nil)
-      .fixedSize()
-      .id(compact)
-      .accessibilityIdentifier("monitor-metric-picker")
+    MetricSwitcher(
+      metric: $metric, theme: theme, compact: compact,
+      controlHeight: MonitorTitlebarGeometry.metricButtonHeight
+    )
+    .frame(width: compact ? 210 : nil)
+    .fixedSize()
+    .frame(height: MonitorTitlebarGeometry.slotHeight, alignment: .center)
+    .id(compact)
+    .accessibilityIdentifier("monitor-metric-picker")
   }
 }
 
@@ -40,7 +51,9 @@ struct MonitorWindowBackground: ViewModifier {
   private static let labeledTabsWidth: CGFloat = {
     let view = NSHostingView(
       rootView:
-        MetricSwitcher(metric: .constant(.cpu), theme: .init(dark: false), controlHeight: 26))
+        MetricSwitcher(
+          metric: .constant(.cpu), theme: .init(dark: false),
+          controlHeight: MonitorTitlebarGeometry.metricButtonHeight))
     return ceil(view.fittingSize.width)
   }()
   private let windowChrome: CGFloat = 128
