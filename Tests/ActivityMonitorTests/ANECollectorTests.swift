@@ -79,4 +79,35 @@ final class ANECollectorTests: XCTestCase {
     XCTAssertNil(ANEEnergyRate.watts(previous: 1000, current: 1500, seconds: 0))
     XCTAssertNil(ANEEnergyRate.watts(previous: -1, current: 1500, seconds: 1))
   }
+  func testControllerStateDeltaMeasuresRunningResidencyWithoutInventingAvailability() {
+    let baseline: [String: Int64] = ["Off": 100, "Running": 100, "Ready": 10]
+    XCTAssertEqual(ANEControllerRate.runningPercent(
+      previous: baseline,
+      current: ["Off": 100, "Running": 200, "Ready": 10], seconds: 1), 100)
+    XCTAssertEqual(ANEControllerRate.runningPercent(
+      previous: baseline,
+      current: ["Off": 200, "Running": 100, "Ready": 10], seconds: 1), 0)
+    XCTAssertEqual(ANEControllerRate.runningPercent(
+      previous: baseline,
+      current: ["Off": 150, "Running": 150, "Ready": 10], seconds: 1), 50)
+    XCTAssertNil(ANEControllerRate.runningPercent(
+      previous: baseline, current: baseline, seconds: 1))
+    XCTAssertNil(ANEControllerRate.runningPercent(
+      previous: baseline,
+      current: ["Off": 50, "Running": 200, "Ready": 10], seconds: 1))
+    XCTAssertNil(ANEControllerRate.runningPercent(
+      previous: baseline,
+      current: ["Off": 100, "Running": 200], seconds: 1))
+    XCTAssertNil(ANEControllerRate.runningPercent(
+      previous: baseline,
+      current: ["Off": 100, "Running": 200, "Ready": 10], seconds: 0))
+  }
+  func testLiveControllerStateIsOptionalAndBounded() {
+    let reader = ANEControllerReader()
+    XCTAssertNil(reader.read()) // First reading only establishes the counter baseline.
+    Thread.sleep(forTimeInterval: 0.15)
+    if let percent = reader.read() {
+      XCTAssertTrue((0...100).contains(percent))
+    }
+  }
 }

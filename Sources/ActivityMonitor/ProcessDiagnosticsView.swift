@@ -547,6 +547,16 @@ struct ProcessDiagnosticsView: View {
           Text("All processes").font(.system(size: 10)).foregroundStyle(theme.secondary)
             .padding(.top, 2)
         }
+        HStack(spacing: 5) {
+          Text("System ANE controller running time")
+            .font(.system(size: 11)).foregroundStyle(theme.secondary)
+          DiagnosticInfoButton(title: "ANE controller running time · context only",
+            text: "The native macOS ANE IOP State counter reports how much of the latest interval the controller spent in Running. This covers the whole Mac. It is controller state, not neural-compute utilization, inference time, or watts attributable to this PID. The undocumented channel may be unavailable.", theme: theme)
+          Spacer(minLength: 8)
+          Text(center.systemANEControllerRunningPercent.map {
+            String(format: "%.1f%%", $0)
+          } ?? "—").font(.system(size: 12, weight: .medium)).monospacedDigit()
+        }
         TelemetryChart(
           samples: TelemetryData.samples(
             points: center.systemANEHistory, metric: .ane, maximumGap: 10),

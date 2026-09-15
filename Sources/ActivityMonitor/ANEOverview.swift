@@ -50,10 +50,18 @@ struct ANEOverview: View {
   private var connections: some View {
     VStack(alignment: .leading, spacing: dense ? 8 : 15) {
       HStack {
-        Text("Observed direct-path clients").font(.system(size: 12, weight: .medium))
+        Text("Neural Engine activity").font(.system(size: 12, weight: .medium))
         DiagnosticInfoButton(title: "Direct ANE connections",
           text: "These are currently open direct-path ANE driver clients visible in the IOKit registry. A connection is not proof of active computation. Indirect work through aned and other paths may not be attributed to the initiating process. Zero visible connections does not establish zero ANE activity.", theme: theme)
       }
+      HStack(spacing: 4) {
+        Text("Controller running time").foregroundStyle(theme.secondary)
+        DiagnosticInfoButton(title: "ANE controller running time",
+          text: "The native macOS ANE IOP State counter reports time in the controller's Running state. This is the percentage of the recent sample interval spent in that state across the whole Mac. It responds to ANE work, but Running does not measure neural-compute utilization, model inference duration, or process attribution. The undocumented channel may be unavailable.", theme: theme)
+        Spacer(minLength: 8)
+        Text(ane.controllerRunningPercent.map { String(format: "%.1f%%", $0) } ?? "—")
+          .monospacedDigit()
+      }.font(.system(size: 11))
       row("Processes with open connections", ane.processCount.map(String.init) ?? "—")
       row("Open connections", ane.connectionCount.map(String.init) ?? "—")
       Spacer(minLength: 0)

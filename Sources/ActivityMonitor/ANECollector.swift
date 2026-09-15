@@ -9,6 +9,7 @@ struct ANEHardwareSnapshot: Equatable {
   var connections: [Int32: Int]
   var connectionsReadable = false
   var estimatedPowerWatts: Double?
+  var controllerRunningPercent: Double?
   var connectionCount: Int? { connectionsReadable ? connections.values.reduce(0, +) : nil }
   var processCount: Int? { connectionsReadable ? connections.count : nil }
 }

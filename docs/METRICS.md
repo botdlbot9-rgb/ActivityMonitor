@@ -74,6 +74,17 @@ Process JSON includes the optional `aneConnections` field. Process CSV adds
 `ANE direct connections`, leaving unavailable cells blank. Neither export
 records inferred utilization or time.
 
+An optional native IOReport `ANE` / `IOP State` / `status` channel reports
+cumulative state residency. The fraction of the latest interval spent in
+`Running` is calculated from its change divided by the change across all
+reported controller states. This is **system-wide controller Running-state
+time**, not neural-compute utilization, inference duration, or per-process ANE
+activity. The Energy Model `ANE` millijoule counter separately supplies an
+estimated system-wide power rate. Both native user-space IOReport channels are
+undocumented and can disappear or change. Missing channels, unreadable samples,
+counter resets, and zero interval totals appear as **—**. Process diagnostics
+show system measurements only as context beside direct-path connections.
+
 These registry keys and class names are driver-defined observations, not a
 documented cross-generation telemetry contract. The collector uses public,
 read-only IOKit APIs without administrator privileges. Apple provides detailed
