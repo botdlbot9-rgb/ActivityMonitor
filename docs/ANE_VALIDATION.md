@@ -44,3 +44,25 @@ power estimate as context, expressly covering all processes. The process
 overview and compact inspector report the selected PID's connection count; the
 inspector labels system watts separately. No process watts or inference duration
 is inferred from the presence, absence, or timing of a connection.
+
+## Additional native OS channel survey
+
+On the same M3 Pro and macOS 26.6, `IOReportCopyAllChannels` enumerated 9,804
+channels. `PMP` / `Fast-Die CE` / `ANE0` exposed state buckets named `0%` through
+`100%`, and `PMP` / `DCS Floor` / `ANE0` exposed `F1` through `F5`. Both channels
+subscribed as a normal user, but every state counter stayed zero during idle
+samples and a sustained 2,000-request Vision image-classification workload. The
+buckets therefore **cannot support a utilization or frequency reading on this
+machine**. `AMC Stats` / `Perf Counters` / `ANE RD` and `ANE WR` were discoverable
+but refused subscriptions. ANE-index interrupt counters were accessible but did
+not track individual model requests or provide meaningful inference counts.
+
+The `ANE` / `IOP State` / `status` channel did provide cumulative controller-state
+residencies. During the sustained Vision workload, `Running` increased while
+`Off` stayed flat; the measured interval was about 100% Running state. After the
+workload, `Off` increased while `Running` stayed flat; the idle interval was 0%
+Running state. The app now computes this percentage from differences between
+successive native samples, showing it only when both samples and the full state
+total are valid. This measures controller state across the whole Mac, **not ANE
+neural-compute utilization**. A Running controller can be waiting or handling
+firmware work, and macOS supplies no arbitrary-PID inference duration here.

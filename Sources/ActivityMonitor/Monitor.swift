@@ -31,7 +31,7 @@ enum Metric: String, CaseIterable, Identifiable {
     case .disk: return "Every read. Every write. In sight."
     case .network: return "Keep a pulse on what’s flowing."
     case .gpu: return "Graphics and compute, across your Mac."
-    case .ane: return "Estimated system Neural Engine power and visible process connections."
+    case .ane: return "System ANE power, controller state, and visible process connections."
     }
   }
 }
@@ -118,6 +118,7 @@ final class Collector: @unchecked Sendable {
   private let gpuReader = GPUHardwareReader()
   private let aneReader = ANEHardwareReader()
   private let aneEnergyReader = ANEEnergyReader()
+  private let aneControllerReader = ANEControllerReader()
   private var gpuTracker = GPUProcessTracker()
   private var cpuTracker = CPUCoreTracker()
   private let detailsCollector = ProcessDetailsCollector()
@@ -132,6 +133,7 @@ final class Collector: @unchecked Sendable {
     let gpu = gpuReader.read()
     var ane = aneReader.read()
     ane.estimatedPowerWatts = aneEnergyReader.read()
+    ane.controllerRunningPercent = aneControllerReader.read()
     let gpuProcesses = gpuTracker.update(
       gpu,
       identities: identities)
@@ -303,7 +305,8 @@ final class Collector: @unchecked Sendable {
       (.energy, rows.filter(\.isApp).reduce(0) { $0 + $1.cpu }, Double(system.battery)),
       (.disk, readRate, writeRate),
       (.network, receiveRate, sendRate),
-      (.ane, snapshot.ane.estimatedPowerWatts ?? -1, 0),
+      (.ane, snapshot.ane.estimatedPowerWatts ?? -1,
+        snapshot.ane.controllerRunningPercent ?? -1),
     ]
     for (metric, a, b) in values {
       histories[metric, default: []].append(Point(date: now, a: a, b: b))

@@ -27,7 +27,7 @@ Keep an eye on performance, understand resource usage, and find the processes th
 | **Disk** | Process reads and writes, transfer totals and current throughput. |
 | **Network** | Incoming and outgoing traffic, packet activity and per-process byte counts. |
 | **GPU** | Device utilization, renderer and tiler activity, GPU memory, and per-process GPU usage and observed time where the driver exposes counters. |
-| **ANE** | Neural Engine device/core counts and visible direct-path process connections, where the driver exposes them. Connection history does not measure utilization. |
+| **ANE** | Estimated system power, ANE controller Running-state time, device/core counts, and visible direct-path process connections where macOS exposes them. |
 
 ## Find the detail that matters
 
@@ -104,9 +104,13 @@ GPU availability depends on your Mac and its driver. Process counters cover all 
 
 On Apple silicon Macs with readable ANE driver properties, the ANE view reports
 device/core counts and histories of currently open direct-path connections.
+Native macOS state counters can also show the fraction of each interval that the
+ANE controller reports **Running**, alongside estimated system ANE power. Running
+state time is a system-wide controller observation, not measured neural-compute
+utilization or inference duration.
 Process rows and the inspector show visible connections for each PID. These are
 driver contexts, not measured inference activity. An app may use ANE indirectly
-without exposing a direct-path client. The view does not invent a utilization
+without exposing a direct-path client. The view does not invent a neural-compute utilization
 percentage or process execution time. [Measurement details and live validation](docs/ANE_VALIDATION.md).
 
 | Wide · Light | Wide · Dark |
@@ -154,7 +158,7 @@ No accounts, telemetry or uploads. Reports and exports are saved to a location y
 
 The CPU overview and process list use 100% per logical processor. The total, breakdown, and chart scale to the full machine capacity: 400% for four logical processors or 1600% for sixteen.
 
-macOS restricts some process information; unavailable values appear as **—**. The Energy view shows **CPU workload**, not Apple’s proprietary Energy Impact score. GPU counters appear where the graphics driver exposes them. ANE shows optional estimated system power from an undocumented OS counter, while process diagnostics show visible direct-path connections and the system power separately as context. Neither measures per-process ANE inference time or utilization. App Nap, Sudden Termination and Apple’s Energy Impact score display **—** when selected. [Column details and availability](docs/process-columns.md) explain each measurement. Disk totals cover readable processes; network totals can differ from individual process counters. Histories begin at launch and stay in memory for up to fifteen minutes.
+macOS restricts some process information; unavailable values appear as **—**. The Energy view shows **CPU workload**, not Apple’s proprietary Energy Impact score. GPU counters appear where the graphics driver exposes them. ANE shows optional estimated system power and controller Running-state time from undocumented OS counters, while process diagnostics show visible direct-path connections and the system measurements separately as context. Neither measures per-process ANE inference time or neural-compute utilization. App Nap, Sudden Termination and Apple’s Energy Impact score display **—** when selected. [Column details and availability](docs/process-columns.md) explain each measurement. Disk totals cover readable processes; network totals can differ from individual process counters. Histories begin at launch and stay in memory for up to fifteen minutes.
 
 [Measurement details](docs/METRICS.md) · [Report an issue](https://github.com/wieslawsoltes/ActivityMonitor/issues) · [Development guide](DEVELOPMENT.md)
 

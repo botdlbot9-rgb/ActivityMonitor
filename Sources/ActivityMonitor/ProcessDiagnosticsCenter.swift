@@ -12,6 +12,7 @@ import SwiftUI
   private var subscription: AnyCancellable?
   var sessionCount: Int { sessions.count }
   var systemANEPowerWatts: Double? { monitor?.ane.estimatedPowerWatts }
+  var systemANEControllerRunningPercent: Double? { monitor?.ane.controllerRunningPercent }
   var systemANEHistory: [Point] { monitor?.histories[.ane] ?? [] }
   var systemANELastUpdate: Date? { monitor?.lastUpdate }
   init(monitor: Monitor) {

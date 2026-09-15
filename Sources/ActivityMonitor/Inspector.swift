@@ -12,6 +12,7 @@ struct MonitorInspector: View {
   let stop: (ProcessRow) -> Void
   var diagnose: ((ProcessRow, Bool) -> Void)? = nil
   var aneSystemPowerWatts: Double? = nil
+  var aneSystemControllerRunningPercent: Double? = nil
   var body: some View {
     VStack(spacing: 0) {
       HStack {
@@ -53,6 +54,9 @@ struct MonitorInspector: View {
               detail("System ANE power",
                 aneSystemPowerWatts.map { String(format: "%.2f W estimated", $0) } ?? "—")
                 .help("Energy Model estimate for the whole Neural Engine. It cannot be attributed to this process.")
+              detail("System ANE controller running",
+                aneSystemControllerRunningPercent.map { String(format: "%.1f%%", $0) } ?? "—")
+                .help("Share of the latest interval in the ANE controller's Running state across the whole Mac. This is not neural-compute utilization or process attribution.")
               Text(
                 p.gpuAvailability
                   + ". Observed time covers this session. Execution-time rates can exceed 100% when GPU work overlaps."
