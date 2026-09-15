@@ -11,6 +11,9 @@ import SwiftUI
   private var pins: [ProcessIdentity: ProcessPinController] = [:]
   private var subscription: AnyCancellable?
   var sessionCount: Int { sessions.count }
+  var systemANEPowerWatts: Double? { monitor?.ane.estimatedPowerWatts }
+  var systemANEHistory: [Point] { monitor?.histories[.ane] ?? [] }
+  var systemANELastUpdate: Date? { monitor?.lastUpdate }
   init(monitor: Monitor) {
     self.monitor = monitor
     subscription = monitor.$lastUpdate.combineLatest(monitor.$paused).sink {

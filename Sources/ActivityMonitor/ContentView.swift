@@ -274,7 +274,7 @@ struct ContentView: View {
     MonitorInspector(
       process: selected, theme: theme, busy: false, close: { inspector = false },
       sample: sample, files: inspectFiles, reveal: reveal, stop: { stopTargets = [$0] },
-      diagnose: openDiagnostics)
+      diagnose: openDiagnostics, aneSystemPowerWatts: monitor.ane.estimatedPowerWatts)
   }
   @ToolbarContentBuilder
   func monitorToolbar(_ layout: MonitorLayout) -> some ToolbarContent {
