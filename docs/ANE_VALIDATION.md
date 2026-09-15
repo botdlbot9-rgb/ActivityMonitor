@@ -37,3 +37,10 @@ ML/Neural Engine Instruments remain the supported tool for detailed model
 timing and activity. No physical validation on another Apple silicon generation
 has been performed; registry class names and energy-channel availability can
 differ.
+
+Process diagnostics has an ANE page with a history of the selected PID's visible
+direct-path connections. A second chart on that page shows the live system-wide
+power estimate as context, expressly covering all processes. The process
+overview and compact inspector report the selected PID's connection count; the
+inspector labels system watts separately. No process watts or inference duration
+is inferred from the presence, absence, or timing of a connection.

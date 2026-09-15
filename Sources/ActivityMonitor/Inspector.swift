@@ -11,6 +11,7 @@ struct MonitorInspector: View {
   let reveal: (ProcessRow) -> Void
   let stop: (ProcessRow) -> Void
   var diagnose: ((ProcessRow, Bool) -> Void)? = nil
+  var aneSystemPowerWatts: Double? = nil
   var body: some View {
     VStack(spacing: 0) {
       HStack {
@@ -49,6 +50,9 @@ struct MonitorInspector: View {
               detail("Observed GPU time", gpuDuration(p.gpuTime))
               detail("ANE connections", p.aneConnections.map(String.init) ?? "—")
                 .help("Open direct-path ANE driver clients visible for this PID; this is not execution or utilization.")
+              detail("System ANE power",
+                aneSystemPowerWatts.map { String(format: "%.2f W estimated", $0) } ?? "—")
+                .help("Energy Model estimate for the whole Neural Engine. It cannot be attributed to this process.")
               Text(
                 p.gpuAvailability
                   + ". Observed time covers this session. Execution-time rates can exceed 100% when GPU work overlaps."

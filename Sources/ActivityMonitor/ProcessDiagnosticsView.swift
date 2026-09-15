@@ -78,7 +78,7 @@ enum ProcessActivityPresentation {
       return
         "GPU execution rate can exceed 100% when work overlaps. Device memory is driver-reported across the visible GPUs; process graphics ledgers provide separate kernel accounting, not a complete Metal allocation inventory. Observed GPU time covers this app session."
     case .ane:
-      return "Visible direct-path ANE connections are not ANE execution, time, utilization, or proof that other processes are not using the Neural Engine."
+      return "Open direct-path ANE clients are visible for this PID. A connection is not proof of active inference; indirect work may not appear here. The system power chart below includes every process and cannot attribute watts, inference time, or utilization to this PID."
     }
   }
 }
@@ -239,6 +239,7 @@ struct ProcessDiagnosticsView: View {
       ScrollView {
         VStack(alignment: .leading, spacing: 16) {
           activityChart(metric)
+          if metric == .ane { aneSystemContext }
           if metric == .memory {
             ProcessMemoryVisualization(
               history: session.memoryHistory, theme: theme, range: session.range)
@@ -480,7 +481,8 @@ struct ProcessDiagnosticsView: View {
               Text(
                 metric == .memory
                   ? "Physical footprint"
-                  : metric == .energy ? "CPU workload" : "Process \(metric.rawValue) usage"
+                  : metric == .energy ? "CPU workload"
+                    : metric == .ane ? "Direct ANE connections" : "Process \(metric.rawValue) usage"
               )
               .font(.system(size: 12)).foregroundStyle(theme.secondary)
               Text(ProcessActivityPresentation.latest(session, metric: metric))
@@ -492,7 +494,8 @@ struct ProcessDiagnosticsView: View {
               CPUChartModePicker(individual: $session.showsThreadCPU, threads: true, theme: theme)
             } else {
               Circle().fill(theme.blue).frame(width: 6, height: 6).padding(.top, 5)
-              Text("Process").font(.system(size: 10)).foregroundStyle(theme.secondary).padding(
+              Text(metric == .ane ? "Selected process" : "Process")
+                .font(.system(size: 10)).foregroundStyle(theme.secondary).padding(
                 .top, 2)
             }
           }
@@ -517,11 +520,41 @@ struct ProcessDiagnosticsView: View {
     }
   }
   private func activityInfo(_ metric: Metric) -> some View {
-    DiagnosticInfoButton(title: "Process \(metric.rawValue) usage",
+    DiagnosticInfoButton(title: metric == .ane ? "Direct ANE connections" : "Process \(metric.rawValue) usage",
       text: ProcessActivityPresentation.note(metric)
         + ((metric == .cpu || metric == .energy) && session.showsThreadCPU
           ? "\n\nIndividual thread CPU refreshes at most every 2 seconds. History begins when enabled." : ""),
       theme: theme)
+  }
+  private var aneSystemContext: some View {
+    DiagnosticPanel(theme: theme) {
+      VStack(alignment: .leading, spacing: 14) {
+        HStack(alignment: .top) {
+          VStack(alignment: .leading, spacing: 5) {
+            Text("Estimated system ANE power")
+              .font(.system(size: 12)).foregroundStyle(theme.secondary)
+            HStack(alignment: .firstTextBaseline, spacing: 5) {
+              Text(center.systemANEPowerWatts.map { String(format: "%.2f", $0) } ?? "—")
+                .font(.system(size: 34, weight: .medium)).tracking(-1).monospacedDigit()
+              Text(center.systemANEPowerWatts == nil ? "not available" : "W estimated")
+                .font(.system(size: 11)).foregroundStyle(theme.secondary)
+            }
+          }
+          Spacer()
+          DiagnosticInfoButton(title: "System ANE power · context only",
+            text: "This live macOS Energy Model estimate covers the entire Neural Engine, including other processes. Changes can coincide with this process's connection history, but the counter cannot attribute watts, inference time, or utilization to this PID. The undocumented OS counter may be unavailable.", theme: theme)
+          Circle().fill(theme.blue).frame(width: 6, height: 6).padding(.top, 5)
+          Text("All processes").font(.system(size: 10)).foregroundStyle(theme.secondary)
+            .padding(.top, 2)
+        }
+        TelemetryChart(
+          samples: TelemetryData.samples(
+            points: center.systemANEHistory, metric: .ane, maximumGap: 10),
+          metric: .ane, range: session.range,
+          end: center.systemANELastUpdate ?? Date(), theme: theme
+        ).frame(height: 155)
+      }
+    }
   }
   private var overviewGroups: [DiagnosticFieldGroup] {
     let identity = [
@@ -533,7 +566,9 @@ struct ProcessDiagnosticsView: View {
     }.map {
       DiagnosticField($0.title, ProcessValues.text(session.row, key: $0.id, metric: .cpu))
     }
-    return DiagnosticFieldGroup.organize(identity + session.fields + security)
+    let ane = [DiagnosticField("ANE direct connections",
+      session.row.aneConnections.map(String.init) ?? "—")]
+    return DiagnosticFieldGroup.organize(identity + session.fields + security + ane)
   }
   private func fields(_ values: [DiagnosticField], compact: Bool = false) -> some View {
     VStack(spacing: 0) {

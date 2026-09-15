@@ -48,8 +48,12 @@ struct DiagnosticSidebar: View {
     ScrollViewReader { proxy in
       ScrollView {
         VStack(alignment: .leading, spacing: 5) {
-          group("Activity", tabs: Array(DiagnosticTab.allCases.prefix(7)))
-          group("Diagnostics", tabs: Array(DiagnosticTab.allCases.dropFirst(7)))
+          group("Activity", tabs: DiagnosticTab.allCases.filter {
+            $0 == .overview || $0.metric != nil
+          })
+          group("Diagnostics", tabs: DiagnosticTab.allCases.filter {
+            $0 != .overview && $0.metric == nil
+          })
         }.padding(12)
       }
       .onChange(of: focused) { _, tab in
@@ -120,6 +124,8 @@ extension DiagnosticTab {
     case .disk: return "Read and write activity for this process."
     case .network: return "Traffic, connections and listening ports."
     case .gpu: return "Graphics activity and device memory across reporting devices."
+    case .ane:
+      return "Direct-path connections for this process, with estimated system ANE power shown separately as context. Neither value measures process inference time or utilization."
     case .threads: return "Thread activity, CPU time and scheduling."
     case .files: return "Open descriptors and their underlying resources."
     case .connections: return "Network endpoints, socket state and queues."

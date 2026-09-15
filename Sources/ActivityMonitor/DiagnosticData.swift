@@ -28,6 +28,7 @@ enum DiagnosticTab: String, CaseIterable, Identifiable, Codable {
   case disk = "Disk"
   case network = "Network"
   case gpu = "GPU"
+  case ane = "ANE"
   case threads = "Threads"
   case files = "Open files"
   case connections = "Connections"
