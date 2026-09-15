@@ -8,7 +8,9 @@ import XCTest
   func testLabelsFitBeforeOptionalToolbarControlsAppear() {
     let tabs = NSHostingView(
       rootView:
-        MetricSwitcher(metric: .constant(.cpu), theme: .init(dark: false), controlHeight: 26))
+        MetricSwitcher(
+          metric: .constant(.cpu), theme: .init(dark: false),
+          controlHeight: MonitorTitlebarGeometry.metricButtonHeight))
     let tabWidth = ceil(tabs.fittingSize.width)
     XCTAssertFalse(MonitorToolbarLayout(width: 420).showsLabels)
     XCTAssertFalse(MonitorToolbarLayout(width: 720).showsLabels)
