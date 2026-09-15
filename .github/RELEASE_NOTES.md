@@ -1,22 +1,17 @@
-Activity Monitor 1.9.1 improves the title bar and makes process search fit smaller windows.
+Activity Monitor 1.10.0 adds an Apple Neural Engine (ANE) view and expands process diagnostics with ANE context.
 
-### Window and toolbar improvements
+### Neural Engine monitoring
 
-- Restored the familiar metric tab styling, with icons and labels when space permits and all six icons in narrow windows.
-- Improved width budgeting so tab labels and additional toolbar actions remain visible at smaller sizes.
-- Restored the top-right controls and grouped Light, Dark, and System appearance selector.
-- Matched the title bar to the window background in light and dark appearances and corrected tab alignment.
-- Clipped scrolling content below the title bar so charts and process rows cannot overlap window controls.
+- Added an ANE view with driver-reported device and core counts, visible direct-path process connections, and an estimated whole-Mac power reading from the native macOS Energy Model.
+- Added the percentage of each recent interval that the ANE controller spent in its `Running` state. This is controller state, not neural-compute utilization or inference duration.
+- Added whole-Mac fabric read and write bandwidth-tier **events per second**. These PMP monitor events respond to ANE work but are not transferred bytes or measured GB/s.
+- Added an ANE page to process diagnostics. It charts visible direct-path connections for the selected process and labels system power, controller state, and fabric events separately as whole-Mac context. Connections alone do not establish active inference.
+- Exported the read-only `ANETelemetry` Swift library for apps that want the optional native OS counters and full per-tier event histograms without administrator privileges.
 
-### Process search
-
-- Kept process controls in one row, with an inline native search field when space permits.
-- Added an expandable search button for narrow windows. Active searches stay visible when resizing.
-- Command-K focuses search; Escape clears the query and dismisses an empty compact search field.
-- Preserved the existing process-list and overview scrolling behavior.
+ANE counter availability depends on the Mac and macOS version. Some native channels are undocumented, and unavailable readings appear as such. Activity Monitor does not infer per-process ANE watts, utilization, or inference time from system counters or driver connections. [Measurement details and M3 Pro validation](https://github.com/wieslawsoltes/ActivityMonitor/blob/v1.10.0/docs/ANE_VALIDATION.md).
 
 ### Install
 
-Use **Check for Updates…** in Activity Monitor 1.9.0, or download the universal DMG or ZIP for Apple silicon and Intel on macOS 14 or later. SHA256SUMS verifies the downloads. Update feeds and archives are signed with Ed25519.
+Use **Check for Updates…** in Activity Monitor 1.9.1, or download the universal DMG or ZIP for Apple silicon and Intel on macOS 14 or later. `SHA256SUMS` verifies the downloads; the update feed and archive are signed with Ed25519.
 
-[Changes since 1.9.0](https://github.com/wieslawsoltes/ActivityMonitor/compare/v1.9.0...v1.9.1)
+[Changes since 1.9.1](https://github.com/wieslawsoltes/ActivityMonitor/compare/v1.9.1...v1.10.0)
