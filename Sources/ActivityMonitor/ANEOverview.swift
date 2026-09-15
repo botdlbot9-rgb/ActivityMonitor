@@ -23,12 +23,16 @@ struct ANEOverview: View {
     VStack(alignment: .leading, spacing: 0) {
       HStack(alignment: .top) {
         VStack(alignment: .leading, spacing: 3) {
-          Text("Direct ANE connections").font(.system(size: 12)).foregroundStyle(theme.secondary)
+          HStack(spacing: 4) {
+            Text("Estimated ANE power").font(.system(size: 12)).foregroundStyle(theme.secondary)
+            DiagnosticInfoButton(title: "Estimated system ANE power",
+              text: "The macOS Energy Model supplies a cumulative ANE millijoule counter. Power is the change between samples divided by elapsed time. It is a system-wide estimate, not ANE utilization, inference time, or process attribution. This undocumented OS counter may be unavailable on some Macs or macOS versions.", theme: theme)
+          }
           HStack(alignment: .firstTextBaseline, spacing: 5) {
-            Text(ane.connectionCount.map(String.init) ?? "—")
+            Text(ane.estimatedPowerWatts.map { String(format: "%.2f", $0) } ?? "—")
               .font(.system(size: dense ? 26 : 34, weight: .medium))
               .foregroundStyle(theme.text)
-            Text(ane.connectionsReadable ? "open now" : "not available")
+            Text(ane.estimatedPowerWatts == nil ? "not available" : "W estimated")
               .font(.system(size: 11)).foregroundStyle(theme.secondary)
           }
         }
@@ -60,7 +64,7 @@ struct ANEOverview: View {
       HStack {
         Text("Neural Engine hardware").font(.system(size: 12, weight: .medium))
         DiagnosticInfoButton(title: "Neural Engine hardware",
-          text: "ANE device and core counts come from optional driver registry properties. They are hardware descriptors, not capacity or utilization measurements. This collector does not report ANE power, execution time, or percentage; Apple provides detailed activity through Instruments, while powermetrics requires administrator privileges.", theme: theme)
+          text: "ANE device and core counts come from optional driver registry properties. They are hardware descriptors, not capacity or utilization measurements. The power estimate above is system-wide; macOS does not expose live ANE inference time or process utilization here.", theme: theme)
         Spacer()
         Image(systemName: "brain").foregroundStyle(theme.tertiary)
       }

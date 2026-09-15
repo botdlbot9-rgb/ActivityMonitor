@@ -8,6 +8,7 @@ struct ANEHardwareSnapshot: Equatable {
   var coreCount: Int?
   var connections: [Int32: Int]
   var connectionsReadable = false
+  var estimatedPowerWatts: Double?
   var connectionCount: Int? { connectionsReadable ? connections.values.reduce(0, +) : nil }
   var processCount: Int? { connectionsReadable ? connections.count : nil }
 }
