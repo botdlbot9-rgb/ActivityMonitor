@@ -72,4 +72,11 @@ final class ANECollectorTests: XCTestCase {
       XCTAssertNil(hardware.connectionCount)
     }
   }
+  func testCumulativeMillijoulesProducePowerAndRejectCounterResets() {
+    XCTAssertEqual(ANEEnergyRate.watts(previous: 1000, current: 1500, seconds: 2), 0.25)
+    XCTAssertEqual(ANEEnergyRate.watts(previous: 1000, current: 1000, seconds: 1), 0)
+    XCTAssertNil(ANEEnergyRate.watts(previous: 1500, current: 1000, seconds: 1))
+    XCTAssertNil(ANEEnergyRate.watts(previous: 1000, current: 1500, seconds: 0))
+    XCTAssertNil(ANEEnergyRate.watts(previous: -1, current: 1500, seconds: 1))
+  }
 }

@@ -114,6 +114,9 @@ struct TelemetryChart: View {
       self.domain = 0...max(100, cpuMaximum)
     } else if perProcess && metric == .ane {
       self.domain = TelemetryData.domain(visible, metric: metric)
+    } else if metric == .ane {
+      let maximum = visible.map(\.value).max() ?? 0
+      self.domain = 0...max(0.2, ceil(maximum * 1.15 * 10) / 10)
     } else if perProcess {
       let maximum = max(1, (visible.map { abs($0.value) }.max() ?? 1) * 1.15)
       self.domain = (metric == .disk || metric == .network ? -maximum : 0)...maximum
@@ -139,7 +142,7 @@ struct TelemetryChart: View {
     case .memory: return perProcess ? "Memory" : "Pressure"
     case .energy: return "CPU workload"
     case .gpu: return perProcess ? "Process" : "Device"
-    case .ane: return perProcess ? "Process connections" : "Open connections"
+    case .ane: return perProcess ? "Process connections" : "Estimated system power"
     case .disk: return sample.series == 0 ? "Read" : "Write"
     case .network: return sample.series == 0 ? "In" : "Out"
     }
@@ -150,7 +153,9 @@ struct TelemetryChart: View {
       return perProcess
         ? bytes(UInt64(max(0, number))) : number >= 3 ? "High" : number >= 2 ? "Moderate" : "Normal"
     case .disk, .network: return bytes(UInt64(max(0, abs(number)))) + "/s"
-    case .ane: return "\(Int(max(0, number))) connections"
+    case .ane:
+      return perProcess ? "\(Int(max(0, number))) connections"
+        : String(format: "%.2f W estimated", max(0, number))
     default: return String(format: "%.1f%%", number)
     }
   }
@@ -283,7 +288,9 @@ struct TelemetryChart: View {
       return (number < 0 ? "−" : "") + String(format: "%.0f", Double(parts.0) ?? 0)
         + String(parts.1.prefix(1))
     }
-    if metric == .ane { return String(format: "%.0f", number) }
+    if metric == .ane {
+      return String(format: perProcess ? "%.0f" : "%.1f", number)
+    }
     return String(format: "%.0f%%", number)
   }
   private func step(_ delta: Int) {
