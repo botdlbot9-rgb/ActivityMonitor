@@ -2,7 +2,7 @@
 # Sign the exact tested distribution archive; never rebuild while holding the signing key.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-VERSION="${VERSION:-1.9.1}"
+VERSION="${VERSION:-1.10.0}"
 [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || exit 1
 ARTIFACTS="${1:-dist}"
 TOOLS=.build/artifacts/sparkle/Sparkle/bin
