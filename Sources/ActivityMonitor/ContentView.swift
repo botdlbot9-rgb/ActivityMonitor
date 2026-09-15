@@ -78,7 +78,7 @@ struct ContentView: View {
   var subheading: String {
     switch metric {
     case .gpu: return "Graphics and compute, across your Mac."
-    case .ane: return "System power, controller activity, and direct-path connections."
+    case .ane: return "System power, controller state, bandwidth samples, and direct-path connections."
     case .cpu: return "A little clarity. A lot of processing power."
     case .memory: return "Understand how your Mac makes room for everything."
     case .energy: return "A closer look at the apps powering your day."
@@ -275,7 +275,9 @@ struct ContentView: View {
       process: selected, theme: theme, busy: false, close: { inspector = false },
       sample: sample, files: inspectFiles, reveal: reveal, stop: { stopTargets = [$0] },
       diagnose: openDiagnostics, aneSystemPowerWatts: monitor.ane.estimatedPowerWatts,
-      aneSystemControllerRunningPercent: monitor.ane.controllerRunningPercent)
+      aneSystemControllerRunningPercent: monitor.ane.controllerRunningPercent,
+      aneFabricReadSamplesPerSecond: monitor.ane.bandwidth.fabricRead?.eventsPerSecond,
+      aneFabricWriteSamplesPerSecond: monitor.ane.bandwidth.fabricWrite?.eventsPerSecond)
   }
   @ToolbarContentBuilder
   func monitorToolbar(_ layout: MonitorLayout) -> some ToolbarContent {

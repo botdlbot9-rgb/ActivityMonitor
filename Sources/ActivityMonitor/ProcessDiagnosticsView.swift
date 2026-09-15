@@ -557,6 +557,15 @@ struct ProcessDiagnosticsView: View {
             String(format: "%.1f%%", $0)
           } ?? "—").font(.system(size: 12, weight: .medium)).monospacedDigit()
         }
+        HStack(spacing: 5) {
+          Text("System ANE fabric tier events")
+            .font(.system(size: 11)).foregroundStyle(theme.secondary)
+          DiagnosticInfoButton(title: "ANE bandwidth monitor · context only",
+            text: "Native macOS PMP histograms count ANE-labeled fabric read and write monitor events in bandwidth tiers. These are system-wide sample rates, not transferred bytes, measured GB/s, neural-compute utilization, or activity attributable to this PID. Missing or unreadable channels appear as unavailable.", theme: theme)
+          Spacer(minLength: 8)
+          Text(aneFabricSampleSummary)
+            .font(.system(size: 11, weight: .medium)).monospacedDigit()
+        }
         TelemetryChart(
           samples: TelemetryData.samples(
             points: center.systemANEHistory, metric: .ane, maximumGap: 10),
@@ -565,6 +574,15 @@ struct ProcessDiagnosticsView: View {
         ).frame(height: 155)
       }
     }
+  }
+  private var aneFabricSampleSummary: String {
+    let read = center.systemANEFabricReadSamplesPerSecond.map {
+      String(format: "%.0f/s", $0)
+    } ?? "—"
+    let write = center.systemANEFabricWriteSamplesPerSecond.map {
+      String(format: "%.0f/s", $0)
+    } ?? "—"
+    return "R \(read) · W \(write)"
   }
   private var overviewGroups: [DiagnosticFieldGroup] {
     let identity = [

@@ -1,4 +1,5 @@
 import AppKit
+import ANETelemetry
 import Darwin
 import Foundation
 import SystemBridge
@@ -31,7 +32,7 @@ enum Metric: String, CaseIterable, Identifiable {
     case .disk: return "Every read. Every write. In sight."
     case .network: return "Keep a pulse on what’s flowing."
     case .gpu: return "Graphics and compute, across your Mac."
-    case .ane: return "System ANE power, controller state, and visible process connections."
+    case .ane: return "System ANE power, controller state, bandwidth samples, and process connections."
     }
   }
 }
@@ -116,9 +117,7 @@ final class Collector: @unchecked Sendable {
   var time = Date()
   private var users: [UInt32: String] = [:]
   private let gpuReader = GPUHardwareReader()
-  private let aneReader = ANEHardwareReader()
-  private let aneEnergyReader = ANEEnergyReader()
-  private let aneControllerReader = ANEControllerReader()
+  private let aneTelemetry = ANETelemetrySampler()
   private var gpuTracker = GPUProcessTracker()
   private var cpuTracker = CPUCoreTracker()
   private let detailsCollector = ProcessDetailsCollector()
@@ -131,9 +130,7 @@ final class Collector: @unchecked Sendable {
       uniqueKeysWithValues: buffer.prefix(Int(count)).map { ($0.pid, $0.start) })
     let network = networkSampler.collect(identities: identities, now: now)
     let gpu = gpuReader.read()
-    var ane = aneReader.read()
-    ane.estimatedPowerWatts = aneEnergyReader.read()
-    ane.controllerRunningPercent = aneControllerReader.read()
+    let ane = aneTelemetry.read()
     let gpuProcesses = gpuTracker.update(
       gpu,
       identities: identities)

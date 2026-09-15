@@ -27,7 +27,7 @@ Keep an eye on performance, understand resource usage, and find the processes th
 | **Disk** | Process reads and writes, transfer totals and current throughput. |
 | **Network** | Incoming and outgoing traffic, packet activity and per-process byte counts. |
 | **GPU** | Device utilization, renderer and tiler activity, GPU memory, and per-process GPU usage and observed time where the driver exposes counters. |
-| **ANE** | Estimated system power, ANE controller Running-state time, device/core counts, and visible direct-path process connections where macOS exposes them. |
+| **ANE** | Estimated system power, controller Running-state time, fabric bandwidth-tier monitor samples, hardware descriptors, and visible direct-path process connections where macOS exposes them. |
 
 ## Find the detail that matters
 
@@ -108,10 +108,14 @@ Native macOS state counters can also show the fraction of each interval that the
 ANE controller reports **Running**, alongside estimated system ANE power. Running
 state time is a system-wide controller observation, not measured neural-compute
 utilization or inference duration.
+Optional native bandwidth monitors report new read/write tier events per second.
+These are **monitor samples**, not bytes transferred or measured GB/s. The
+[ANETelemetry Swift library](docs/ANETelemetry.md) exposes their raw tier counts
+without administrator privileges.
 Process rows and the inspector show visible connections for each PID. These are
 driver contexts, not measured inference activity. An app may use ANE indirectly
-without exposing a direct-path client. The view does not invent a neural-compute utilization
-percentage or process execution time. [Measurement details and live validation](docs/ANE_VALIDATION.md).
+without exposing a direct-path client. The view does not invent a neural-compute
+utilization percentage or process execution time. [Measurement details and live validation](docs/ANE_VALIDATION.md).
 
 | Wide · Light | Wide · Dark |
 | :---: | :---: |

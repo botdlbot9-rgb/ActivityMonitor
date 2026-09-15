@@ -13,6 +13,12 @@ import SwiftUI
   var sessionCount: Int { sessions.count }
   var systemANEPowerWatts: Double? { monitor?.ane.estimatedPowerWatts }
   var systemANEControllerRunningPercent: Double? { monitor?.ane.controllerRunningPercent }
+  var systemANEFabricReadSamplesPerSecond: Double? {
+    monitor?.ane.bandwidth.fabricRead?.eventsPerSecond
+  }
+  var systemANEFabricWriteSamplesPerSecond: Double? {
+    monitor?.ane.bandwidth.fabricWrite?.eventsPerSecond
+  }
   var systemANEHistory: [Point] { monitor?.histories[.ane] ?? [] }
   var systemANELastUpdate: Date? { monitor?.lastUpdate }
   init(monitor: Monitor) {

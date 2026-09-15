@@ -1,3 +1,4 @@
+import ANETelemetry
 import SwiftUI
 
 struct ANEOverview: View {
@@ -70,14 +71,20 @@ struct ANEOverview: View {
   private var hardware: some View {
     VStack(alignment: .leading, spacing: dense ? 8 : 15) {
       HStack {
-        Text("Neural Engine hardware").font(.system(size: 12, weight: .medium))
-        DiagnosticInfoButton(title: "Neural Engine hardware",
-          text: "ANE device and core counts come from optional driver registry properties. They are hardware descriptors, not capacity or utilization measurements. The power estimate above is system-wide; macOS does not expose live ANE inference time or process utilization here.", theme: theme)
+        Text("ANE hardware & bandwidth").font(.system(size: 12, weight: .medium))
+        DiagnosticInfoButton(title: "ANE hardware & bandwidth",
+          text: "ANE device and core counts are optional driver descriptors. Fabric read/write rates count PMP bandwidth-monitor tier events per second across the whole Mac; each event belongs to a labeled GB/s tier, but events are not bytes transferred and the displayed rate is not measured GB/s. Neither source attributes inference time or utilization to a process.", theme: theme)
         Spacer()
         Image(systemName: "brain").foregroundStyle(theme.tertiary)
       }
       row("ANE devices", ane.engineCount.map(String.init) ?? "—")
       row("Reported ANE cores", ane.coreCount.map(String.init) ?? "—")
+      row("Fabric read tier events", ane.bandwidth.fabricRead.map {
+        String(format: "%.0f/s", $0.eventsPerSecond)
+      } ?? "—")
+      row("Fabric write tier events", ane.bandwidth.fabricWrite.map {
+        String(format: "%.0f/s", $0.eventsPerSecond)
+      } ?? "—")
       Spacer(minLength: 0)
       if !ane.available {
         Text("No Neural Engine driver data found")

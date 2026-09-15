@@ -13,6 +13,8 @@ struct MonitorInspector: View {
   var diagnose: ((ProcessRow, Bool) -> Void)? = nil
   var aneSystemPowerWatts: Double? = nil
   var aneSystemControllerRunningPercent: Double? = nil
+  var aneFabricReadSamplesPerSecond: Double? = nil
+  var aneFabricWriteSamplesPerSecond: Double? = nil
   var body: some View {
     VStack(spacing: 0) {
       HStack {
@@ -57,6 +59,12 @@ struct MonitorInspector: View {
               detail("System ANE controller running",
                 aneSystemControllerRunningPercent.map { String(format: "%.1f%%", $0) } ?? "—")
                 .help("Share of the latest interval in the ANE controller's Running state across the whole Mac. This is not neural-compute utilization or process attribution.")
+              detail("System ANE fabric read samples",
+                aneFabricReadSamplesPerSecond.map { String(format: "%.0f/s", $0) } ?? "—")
+                .help("PMP ANE fabric read bandwidth-tier monitor events per second across the whole Mac, not transferred bytes, measured GB/s, or process attribution.")
+              detail("System ANE fabric write samples",
+                aneFabricWriteSamplesPerSecond.map { String(format: "%.0f/s", $0) } ?? "—")
+                .help("PMP ANE fabric write bandwidth-tier monitor events per second across the whole Mac, not transferred bytes, measured GB/s, or process attribution.")
               Text(
                 p.gpuAvailability
                   + ". Observed time covers this session. Execution-time rates can exceed 100% when GPU work overlaps."
