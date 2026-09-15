@@ -283,11 +283,10 @@ struct ContentView: View {
   @ToolbarContentBuilder
   func monitorToolbar(_ layout: MonitorLayout) -> some ToolbarContent {
     if MonitorToolbarLayout(width: layout.width).showsBrand {
-      ToolbarItem(placement: .navigation) {
-        BrandMark(size: 24)
-          .frame(height: MonitorTitlebarGeometry.slotHeight, alignment: .center)
-          .help("Activity Monitor · \(Self.machineName) · \(architectureLabel)")
-          .accessibilityLabel("Activity Monitor, \(Self.machineName), \(architectureLabel)")
+      if #available(macOS 26, *) {
+        brandToolbarItem().sharedBackgroundVisibility(.hidden)
+      } else {
+        brandToolbarItem()
       }
     }
     if #available(macOS 26, *) {
@@ -299,6 +298,14 @@ struct ContentView: View {
       actionToolbarItem(layout).sharedBackgroundVisibility(.hidden)
     } else {
       actionToolbarItem(layout)
+    }
+  }
+  private func brandToolbarItem() -> some ToolbarContent {
+    ToolbarItem(placement: .navigation) {
+      BrandMark(size: 24)
+        .frame(height: MonitorTitlebarGeometry.slotHeight, alignment: .center)
+        .help("Activity Monitor · \(Self.machineName) · \(architectureLabel)")
+        .accessibilityLabel("Activity Monitor, \(Self.machineName), \(architectureLabel)")
     }
   }
   private func actionToolbarItem(_ layout: MonitorLayout) -> some ToolbarContent {
